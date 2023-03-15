@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from random import randint
 import scipy.linalg as scp
 def draw(data):
     data.hist("texture (mean)", by="Malignant/Benign", grid=True, bins=[0, 5, 10, 15, 20, 25, 30, 35, 40],
@@ -60,18 +59,40 @@ if __name__ == '__main__':
     draw(data_train)
     b_train = type(data_train.loc[:,["Malignant/Benign"]].values)
     b_sol = type(data_validate.loc[:, ["Malignant/Benign"]].values)
-    Atrain,w = get_Aw(data_train,b_train,True)
-    Asol = to_quadratic(data_validate.loc[:, ["radius (mean)", "perimeter (mean)", "area (mean)", "symmetry (mean)"]].values)
-    # Asol = np.array(data_validate.iloc[:, 2:len(data_train.columns)].values)
+    Atrain_q,w_q = get_Aw(data_train,b_train,True)
+    Atrain, w = get_Aw(data_train, b_train,False)
+    Asol_q = to_quadratic(data_validate.loc[:, ["radius (mean)", "perimeter (mean)", "area (mean)", "symmetry (mean)"]].values)
+    Asol = np.array(data_validate.iloc[:, 2:len(data_train.columns)].values)
     test = np.dot(Asol,w)
-    # test = np.dot(Asol, scp.lstsq(Atrain,b_train)[0])
+    test_q = np.dot(Asol_q,w_q)
+    cond = np.dot(np.linalg.norm(Atrain), np.linalg.norm(np.linalg.pinv(Atrain)))
+    cond_q = np.dot(np.linalg.norm(Atrain_q,None), np.linalg.norm(np.linalg.pinv(Atrain_q),None)) #Forbenius
     for i in range(len(test)):
         if(test[i]<0):
             test[i] = -1
         else:
             test[i] = 1
-    ctr = 0
+        if test_q[i]<0:
+            test_q[i] = -1
+        else:
+            test_q[i] = 1
+    fp = 0
+    fn = 0
+    fp_q = 0
+    fn_q = 0
     for i in range(len(test)):
-        if(test[i]==b_train[i]):
-            ctr+=1
-    print(ctr)
+        if(test[i]==1 and b_sol[i]==-1):
+            fp+=1
+        elif(test[i]==-1 and b_sol[i]==1):
+            fn+=1
+        if (test_q[i] == 1 and b_sol[i] == -1):
+            fp_q += 1
+        elif (test_q[i] == -1 and b_sol[i] == 1):
+            fn_q += 1
+    print("False positive: "+str(fp))
+    print("False negative: "+str(fn))
+    print("Effficency "+str(1-(fp+fn)/260))
+    print("False positive_q: "+str(fp_q))
+    print("False negative_q: "+str(fn_q))
+    print("Effficency_q "+str(1-(fp_q+fn_q)/260))
+    # np.dot(np.dot)
