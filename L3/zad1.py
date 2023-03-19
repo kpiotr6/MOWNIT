@@ -1,5 +1,7 @@
 import numpy as np
 from random import randint
+import matplotlib.pyplot as plt
+
 def f1(x,j):
     return x**j
 def f2(x,j):
@@ -8,6 +10,13 @@ def f3(x,j):
     return (x-1940)**j
 def f4(x,j):
     return ((x-1940)/40)**j
+
+def f2_val(x):
+    return (x-1900)
+def f3_val(x):
+    return (x-1940)
+def f4_val(x):
+    return (x-1940)/40
 
 def vandermond(f,xs):
     n = len(xs)
@@ -18,9 +27,9 @@ def vandermond(f,xs):
     return V
 
 def horner(x,c):
-    result = c[len(c)-1] 
-    for i in range(len(c)-2,-1,-1):
-        result = result*x + c[i]
+    result = 0 
+    for i in range(len(c)-1,-1,-1):
+        result = (result*x) + c[i]
     return result
 
 def LagrangeInterpolation(xs, ys, x):
@@ -75,31 +84,31 @@ if __name__ == '__main__':
     v3 = vandermond(f3,years)
     v4 = vandermond(f4,years)
 
-    # cond1 = np.linalg.cond(v1)
-    # cond2 = np.linalg.cond(v2)
-    # cond3 = np.linalg.cond(v3)
-    # cond4 = np.linalg.cond(v4)
+    cond1 = np.linalg.cond(v1)
+    cond2 = np.linalg.cond(v2)
+    cond3 = np.linalg.cond(v3)
+    cond4 = np.linalg.cond(v4)
     
-    # best_cond = min(cond1, cond2, cond3, cond4)
+    best_cond = min(cond1, cond2, cond3, cond4)
 
-    # print("cond1 = ", cond1, "cond2 = ", cond2, "cond3 = ", cond3, "cond4 = ", cond4)
+    print("cond1 = ", cond1, "\ncond2 = ", cond2, "\ncond3 = ", cond3, "\ncond4 = ", cond4)
     
-    y = [1900,1910,1920,1930,1940,1950,1960,1970,1980]
-    p = [76212168,92228496,106021537,123202624,132164569,151325798,179323175,203302031,226542199]
-    vk = vandermond(f4,y)
-    ct = np.dot(np.linalg.inv(vk), p)
-    # print(horner(1990,np.flip(ct)))
+    c = np.dot(np.linalg.inv(v4), pop)
+    print(c)
+    
+    x_vals = np.arange(1900, 1981, 1)
+    y_vals = np.zeros(81)
+    for i in range(len(x_vals)):
+        y_vals[i] = horner(f4_val(x_vals[i]), c)
+    
+    plt.plot(x_vals, y_vals)
+    plt.show()
+
+    print(horner(f4_val(1990), c))
+    # print(calc_polynom_naive(ct, 1920))
     # print(LagrangeInterpolation(years, pop, 1975))
-    print(newton_polynomial(years,pop,1970))
+    # print(newton_polynomial(years,pop,1970))
     # print(horner(1900, newton_poly(divided_diff(years,pop),years,1900)))
-    # print(v4)
-    # print()
-    # c = np.zeros((1, 9))
-    # c = np.dot(np.linalg.inv(v4), pop)
-    # print(np.dot(v4,c))
 
-    # print(horner(1900,c))
-    # print(c)
-    # print(best_cond)
     
     # http://www.algorytm.org/procedury-numeryczne/interpolacja-lagrange-a/inter-lagrange-j.html
