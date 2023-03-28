@@ -104,7 +104,7 @@ if __name__ == '__main__':
     plt.plot(x_vals, y_vals)
     plt.show()
 
-    print(horner(f4_val(1990), c))
+    # print(horner(f4_val(1980), c))
     # print(calc_polynom_naive(ct, 1920))
     # print(LagrangeInterpolation(years, pop, 1975))
     # print(newton_polynomial(years,pop,1970))
