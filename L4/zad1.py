@@ -1,11 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+from scipy import interpolate
+import mpmath as mp
 def f1(x):
     return 1/(1+25*x*x)
 
 def f2(x):
-    return np.exp(np.cos(x))
+    return mp.exp(mp.cos(x))
 
 def lagrange_polynomial(x_values, y_values, x):
     sol = 0
@@ -111,5 +112,6 @@ if __name__ == "__main__":
     # plt.plot(x_space,y_eqdist_lag)
     plt.plot(x_space,y_edist_spl)
     # plt.plot(x_space,[f1(x) for x in x_space])
-
+    cs = interpolate.CubicSpline(x_eq,y_eq)
+    plt.plot(x_space,cs(x_space))
     pass
