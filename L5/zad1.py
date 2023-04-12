@@ -1,7 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy as sc
-import mpmath as mp
 
 def polynomial_matrix(x_values,pow):
     m = len(x_values)
@@ -10,7 +8,7 @@ def polynomial_matrix(x_values,pow):
     for i in range(m):
         for j in range(n):
             matrix[i][j] = x_values[i]**j
-    return np.matrix(matrix)
+    return matrix
 
 def horner(x,c):
     result = 0 
@@ -26,7 +24,7 @@ def sqdiff(real,calculated):
 
 if __name__ == "__main__":
     # Something is wrong with np.linalg.lstsq when m>6
-    m = 6
+    m = 7
     real = 248709873
     years = np.array([1900,1910,1920,1930,1940,1950,1960,1970,1980])
     pop = [76212168,92228496,106021537,123202624,132164569,151325798,179323175,203302031,226542199]
@@ -35,17 +33,19 @@ if __name__ == "__main__":
     x_space = np.arange(1900, 1990, 0.1)
     AICcs = np.empty(shape=m)
     errors = np.empty(shape=m)
-    for i in range(1,m):
+    for i in range(0,m):
         k = i+1
         p_matrix = polynomial_matrix(years,i)
-        coeff.append(np.linalg.lstsq(p_matrix,pop)[0])
+        coeff.append(np.linalg.lstsq(p_matrix,pop,rcond=-1)[0])
         y_vals = [horner(x,coeff[i-1]) for x in years]
         y_space = [horner(x,coeff[i-1]) for x in x_space]
-        AICcs[i-1] = 2*k+n*np.log(sqdiff(pop,y_vals)/n)+2*k*(k+1)/(n-k-1)
-        errors[i-1] = abs(real-horner(1990,coeff[i-1]))/real
-        plt.plot(x_space,y_space)
+        AICcs[i] = 2*k+n*np.log(sqdiff(pop,y_vals)/n)+2*k*(k+1)/(n-k-1)
+        errors[i] = abs(real-horner(1990,coeff[i-1]))/real
+        if i==6:
+            plt.plot(x_space,y_space)
+    horner(1990,coeff[6])
     plt.scatter(years,pop)
-    print(AICcs)
-    print(errors)
+    print("Kryterium informacyjne Akaikego: ",AICcs)
+    print("Błędy: ",errors)
     
    
