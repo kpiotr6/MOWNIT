@@ -131,9 +131,9 @@ error_leggaus = np.array([1.66957873e-04, 4.36244979e-09, 4.93480729e-13, 1.4135
 
 i_values = np.array([i for i in range(t)])
 
-# plt.plot(m_values, error_rect, c="red", label="Error rectangle")
-# plt.plot(m_values, error_trapez, c="green", label="Error trapez")
-# plt.plot(m_values, error_simps, c="yellow", label="Error Simpson")
+plt.plot(m_values, error_rect, c="red", label="Error rectangle")
+plt.plot(m_values, error_trapez, c="green", label="Error trapez")
+plt.plot(m_values, error_simps, c="yellow", label="Error Simpson")
 plt.plot(i_values, error_leggaus, c="pink", label="Error Gauss-Legendre")
 
 plt.yscale("log")
